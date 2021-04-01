@@ -144,7 +144,7 @@
 			this.children = [];
 		},
 		mounted() {
-			this.getContentHeight();
+			// this.getContentHeight();
 		},
 		methods: {
 			init() {
@@ -165,10 +165,12 @@
 					// 等动画结束后，再移除下拉菜单中的内容，否则直接移除，也就没有下拉菜单收起的效果了
 					setTimeout(() => {
 						this.children[index].active = false;
+						this.contentHeight=0;
 					}, this.duration)
 					return;
 				}
 				this.open(index);
+				this.getContentHeight();
 			},
 			// 打开下拉菜单
 			open(index) {
@@ -193,6 +195,7 @@
 				this.$emit('close', this.current);
 				// 设置为收起状态，同时current归位，设置为空字符串
 				this.active = false;
+				this.contentHeight=0;
 				this.current = 99999;
 				// 下拉内容的样式进行调整，不透明度设置为0
 				this.contentStyle = {
