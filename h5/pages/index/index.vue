@@ -56,7 +56,7 @@
 				</div>
 			</div>
 		</div>
-		<u-action-sheet :list="moreList" v-model="moreShow"></u-action-sheet>
+		<u-action-sheet :list="moreList" v-model="moreShow" @click="handleOpera"></u-action-sheet>
 		<div class="empty" v-show="postList.length === 0">
 			<u-empty text="暂无数据~" mode="list"></u-empty>
 		</div>
@@ -184,6 +184,18 @@
 			moreOpera(item) {
 				this.currentForum = item;
 				this.moreShow = true;
+			},
+			//更多操作选择事件
+			handleOpera(index) {
+				if (index === 0) {
+
+				} else if (index === 1) {
+
+				} else if (index === 2) {
+					window.open('https://mainnet.aeternal.io/transactions/' + this.currentForum.hash)
+				} else if (index === 3) {
+					window.open('https://www.aeknow.org/block/transaction/' + this.currentForum.hash);
+				}
 			}
 		}
 	}
