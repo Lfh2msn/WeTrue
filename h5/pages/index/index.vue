@@ -20,8 +20,15 @@
 						</div>
 					</div>
 					<div class="user-info">
-						<div class="name">{{item.users.userName || '匿名'}}</div>
-						<div class="time">{{$moment(item.utcTime).format('yyyy-MM-DD hh:mm:ss')}}</div>
+						<div class="user">
+							<div class="name">{{item.users.userName || '匿名'}}</div>
+							<div class="more">
+								<fa-FontAwesome type="fas fa-angle-down" size="36" class="mr-10" color="#cecece"
+									@tap="moreOpera(item)">
+								</fa-FontAwesome>
+							</div>
+						</div>
+						<div class="time">{{$moment(item.utcTime).fromNow()}}</div>
 					</div>
 				</div>
 				<div class="main-content">
@@ -29,10 +36,29 @@
 						{{item.payload}}
 					</div>
 					<div class="img-list">
-						<u-image width="100%" height="300rpx" :src="item.imgTx" v-if="item.imgTx"></u-image>
+						<u-image width="150rpx" height="150rpx" :src="item.imgTx" v-if="item.imgTx"></u-image>
+					</div>
+				</div>
+				<div class="operation">
+					<div class="item">
+						<fa-FontAwesome type="far fa-heart" size="28" class="mr-10" color="#666"></fa-FontAwesome>
+						<!-- <fa-FontAwesome type="fas fa-heart" size="28" class="mr-10" color="#f04a82"></fa-FontAwesome> -->
+						{{item.love}}
+					</div>
+					<div class="item">
+						<fa-FontAwesome type="far fa-comment" size="28" class="mr-10" color="#666"></fa-FontAwesome>
+						{{item.commentNumber}}
+					</div>
+					<div class="item">
+						<fa-FontAwesome type="far fa-star" size="28" class="mr-10" color="#666"></fa-FontAwesome>
+						<!-- <fa-FontAwesome type="fas fa-star" size="28" class="mr-10" color="#ffc107"></fa-FontAwesome> -->
 					</div>
 				</div>
 			</div>
+		</div>
+		<u-action-sheet :list="moreList" v-model="moreShow"></u-action-sheet>
+		<div class="empty" v-show="postList.length === 0">
+			<u-empty text="暂无数据~" mode="list"></u-empty>
 		</div>
 		<u-loadmore bg-color="rgba(0,0,0,0)" margin-bottom="20" :status="more" v-show="postList.length > 0" />
 	</view>
@@ -53,6 +79,21 @@
 					totalPage: 1
 				}, //页码信息
 				more: 'loadmore', //加载更多
+				moreList: [{
+					text: '关注',
+					subText: '关注TA'
+				}, {
+					text: '投诉',
+					subText: '投诉反馈不良内容'
+				}, {
+					text: 'Aeternal',
+					subText: '查看帖子在Aeternal的hash地址'
+				}, {
+					text: 'AEKnow',
+					subText: '查看帖子在AEKnow的hash地址'
+				}],
+				currentForum: {}, //当前选择的帖子
+				moreShow: false, //下箭头控制显示更多操作
 			}
 		},
 		//上拉刷新
@@ -139,6 +180,11 @@
 					}
 				}
 			},
+			//更多操作
+			moreOpera(item) {
+				this.currentForum = item;
+				this.moreShow = true;
+			}
 		}
 	}
 </script>
@@ -146,10 +192,11 @@
 <style lang="scss" scoped>
 	.index {
 		.nav {
-			width:100%;
+			width: 100%;
+
 			.u-dropdown {
 				background-color: #fafafa;
-				border-bottom: 1px solid #c8c8c8;
+				border-bottom: 1rpx solid #ddd;
 				height: 44px;
 			}
 		}
@@ -178,8 +225,8 @@
 
 						.level {
 							position: absolute;
-							right: -6rpx;
-							bottom: 4rpx;
+							right: -8rpx;
+							bottom: 2rpx;
 							width: 34rpx;
 							height: 34rpx;
 							background-color: #d62900;
@@ -202,10 +249,17 @@
 						display: flex;
 						align-items: center;
 						flex-wrap: wrap;
+						width: 100%;
 
-						.name {
-							font-size: 28rpx;
+						.user {
 							width: 100%;
+							display: flex;
+							justify-content: space-between;
+							align-items: center;
+
+							.name {
+								font-size: 28rpx;
+							}
 						}
 
 						.time {
@@ -218,12 +272,22 @@
 				}
 
 				.main-content {
-					padding: 0 30rpx 30rpx 30rpx;
+					margin: 0 30rpx 0rpx 30rpx;
+					padding: 0 0 25rpx 0;
 					font-size: 26rpx;
+					border-bottom: 2rpx solid #e9e9e9;
 
 					.text-content {
 						margin-bottom: 20rpx;
 					}
+				}
+
+				.operation {
+					height: 80rpx;
+					display: flex;
+					justify-content: space-around;
+					align-items: center;
+					color: #666;
 				}
 			}
 		}

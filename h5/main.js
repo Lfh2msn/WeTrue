@@ -5,6 +5,7 @@ import i18n from './lang' // Internationalization
 import http from "@/util/request.js"
 import store from './store';
 import moment from 'moment';
+moment.locale('zh-cn');
 Vue.prototype.$http = http
 Vue.prototype.$store = store
 Vue.prototype.$moment = moment

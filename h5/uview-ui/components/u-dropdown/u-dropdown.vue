@@ -5,7 +5,8 @@
 		}" :class="{
 			'u-border-bottom': borderBottom
 		}">
-			<view class="u-dropdown__menu__item" v-for="(item, index) in menuList" :key="index" @tap.stop="menuClick(index)">
+			<view class="u-dropdown__menu__item" v-for="(item, index) in menuList" :key="index"
+				@tap.stop="menuClick(index)">
 				<view class="u-flex">
 					<text class="u-dropdown__menu__item__text" :style="{
 						color: item.disabled ? '#c0c4cc' : (index === current || highlightIndex == index) ? activeColor : inactiveColor,
@@ -14,7 +15,8 @@
 					<view class="u-dropdown__menu__item__arrow" :class="{
 						'u-dropdown__menu__item__arrow--rotate': index === current
 					}">
-						<u-icon :custom-style="{display: 'flex'}" :name="menuIcon" :size="$u.addUnit(menuIconSize)" :color="index === current || highlightIndex == index ? activeColor : '#c0c4cc'"></u-icon>
+						<u-icon :custom-style="{display: 'flex'}" :name="menuIcon" :size="$u.addUnit(menuIconSize)"
+							:color="index === current || highlightIndex == index ? activeColor : '#c0c4cc'"></u-icon>
 					</view>
 				</view>
 			</view>
@@ -23,8 +25,7 @@
 			transition: `opacity ${duration / 1000}s linear`,
 			top: $u.addUnit(height),
 			height: contentHeight + 'px'
-		}]"
-		 @tap="maskClick" @touchmove.stop.prevent>
+		}]" @tap="maskClick" @touchmove.stop.prevent>
 			<view @tap.stop.prevent class="u-dropdown__content__popup" :style="[popupStyle]">
 				<slot></slot>
 			</view>
@@ -165,7 +166,7 @@
 					// 等动画结束后，再移除下拉菜单中的内容，否则直接移除，也就没有下拉菜单收起的效果了
 					setTimeout(() => {
 						this.children[index].active = false;
-						this.contentHeight=0;
+						this.contentHeight = 0;
 					}, this.duration)
 					return;
 				}
@@ -195,7 +196,9 @@
 				this.$emit('close', this.current);
 				// 设置为收起状态，同时current归位，设置为空字符串
 				this.active = false;
-				this.contentHeight=0;
+				setTimeout(() => {
+					this.contentHeight = 0;
+				}, this.duration)
 				this.current = 99999;
 				// 下拉内容的样式进行调整，不透明度设置为0
 				this.contentStyle = {
@@ -276,7 +279,7 @@
 			left: 0px;
 			bottom: 0;
 			overflow: hidden;
-			
+
 
 			&__mask {
 				position: absolute;

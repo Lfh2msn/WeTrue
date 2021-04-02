@@ -9,7 +9,8 @@ var http = new Request({
 //请求前拦截器
 http.interceptors.request.use(config=>{
 	config.header={
-		'Content-type': 'application/x-www-form-urlencoded'
+		'Content-type': 'application/x-www-form-urlencoded',
+		'ak-token':'ak_2kxt6D65giv4yNt4oa44SjW4jEXfoHMviPFvAreSEXvz25Q3QQ'
 	};
 	return config;
 })

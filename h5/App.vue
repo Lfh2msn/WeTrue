@@ -18,4 +18,30 @@
 	page{
 		background-color: #efefef;
 	}
+	.empty{
+		height: 80vh;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+	//sass循环语法
+	@for $i from 0 through 200 {
+		$rpx: $i * 1rpx !important; //默认间距单位
+	
+		.mb-#{$i} {
+			margin-bottom: $rpx;
+		}
+	
+		.mr-#{$i} {
+			margin-right: $rpx;
+		}
+	
+		.mt-#{$i} {
+			margin-top: $rpx;
+		}
+	
+		.font#{$i} {
+			font-size: $rpx;
+		}
+	}
 </style>
