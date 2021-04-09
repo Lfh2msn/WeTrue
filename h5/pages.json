@@ -2,7 +2,7 @@
 	"easycom": {
 		"autoscan": true,
 		"custom": {
-			"fa-(.*)": "@/components/Am-$1/index.vue" ,// 加入此行即可
+			"fa-(.*)": "@/components/Am-$1/index.vue", // 加入此行即可
 			"^u-(.*)": "@/uview-ui/components/u-$1/u-$1.vue"
 		}
 	},
@@ -22,6 +22,33 @@
 				},
 				"enablePullDownRefresh": true // 是否开启下拉刷新
 			}
+		}, {
+			"path": "pages/login/login",
+			"style": {
+				"app-plus": {
+					"titleNView": false //禁用原生导航栏
+				},
+				"navigationBarTitleText": "微触登陆",
+				"enablePullDownRefresh": false
+			}
+		}, {
+			"path": "pages/login/mnemonic",
+			"style": {
+				"app-plus": {
+					"titleNView": false //禁用原生导航栏
+				},
+				"navigationBarTitleText": "生成账户",
+				"enablePullDownRefresh": false
+			}
+		}, {
+			"path": "pages/my/index",
+			"style": {
+				"app-plus": {
+					"titleNView": false //禁用原生导航栏
+				},
+				"navigationBarTitleText": "我的",
+				"enablePullDownRefresh": false
+			}
 		}
 	],
 	"globalStyle": {
@@ -36,16 +63,17 @@
 		"borderStyle": "black",
 		"backgroundColor": "#ffffff",
 		"list": [{
-			"pagePath": "pages/index/index",
-			"iconPath": "static/index.png",
-			"selectedIconPath": "static/index_on.png",
-			"text": "首页"
-		},
-		{
-			"pagePath": "pages/my/index",
-			"iconPath": "static/my.png",
-			"selectedIconPath": "static/my-on.png",
-			"text": "我的"
-		}]
+				"pagePath": "pages/index/index",
+				"iconPath": "static/index.png",
+				"selectedIconPath": "static/index_on.png",
+				"text": "首页"
+			},
+			{
+				"pagePath": "pages/my/index",
+				"iconPath": "static/my.png",
+				"selectedIconPath": "static/my-on.png",
+				"text": "我的"
+			}
+		]
 	}
 }

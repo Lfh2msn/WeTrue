@@ -18,11 +18,33 @@
 	page{
 		background-color: #efefef;
 	}
+	/*每个页面公共css */
+	::-webkit-scrollbar {
+		display: none;
+		width: 0 !important;
+		height: 0 !important;
+		-webkit-appearance: none;
+		background: transparent;
+	}
+	.clearfix:after{
+	    content: "";
+	    display: block;
+	    clear: both;
+	}
+	.clearfix{
+	    zoom: 1;
+	    overflow: hidden;
+	}
+	.pull-left{float:left;}
+	.pull-right{float:right;}
 	.empty{
 		height: 80vh;
 		display: flex;
 		justify-content: center;
 		align-items: center;
+	}
+	.inline{
+		display: inline-block;
 	}
 	//sass循环语法
 	@for $i from 0 through 200 {

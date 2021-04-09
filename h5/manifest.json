@@ -2,8 +2,8 @@
     "name" : "wetrue",
     "appid" : "__UNI__BC48802",
     "description" : "",
-    "versionName" : "1.0.0",
-    "versionCode" : "100",
+    "versionName" : "2.0.0",
+    "versionCode" : 200,
     "transformPx" : false,
     /* 5+App特有相关 */
     "app-plus" : {

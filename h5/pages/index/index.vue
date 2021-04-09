@@ -21,7 +21,9 @@
 					</div>
 					<div class="user-info">
 						<div class="user">
-							<div class="name">{{item.users.userName || '匿名'}}</div>
+							<div class="name">
+								{{item.users.userName || '匿名'}}<text>(ID:{{item.users.userAddress.slice(-4)}})</text>
+							</div>
 							<div class="more">
 								<fa-FontAwesome type="fas fa-angle-down" size="36" class="mr-10" color="#cecece"
 									@tap="moreOpera(item)">
@@ -41,24 +43,29 @@
 				</div>
 				<div class="operation">
 					<div class="item">
-						<fa-FontAwesome type="far fa-heart" size="28" class="mr-10" color="#666"></fa-FontAwesome>
-						<!-- <fa-FontAwesome type="fas fa-heart" size="28" class="mr-10" color="#f04a82"></fa-FontAwesome> -->
-						{{item.love}}
-					</div>
-					<div class="item">
 						<fa-FontAwesome type="far fa-comment" size="28" class="mr-10" color="#666"></fa-FontAwesome>
 						{{item.commentNumber}}
 					</div>
 					<div class="item">
-						<fa-FontAwesome type="far fa-star" size="28" class="mr-10" color="#666"></fa-FontAwesome>
-						<!-- <fa-FontAwesome type="fas fa-star" size="28" class="mr-10" color="#ffc107"></fa-FontAwesome> -->
+						<fa-FontAwesome type="fas fa-star" size="28" class="mr-10" color="#ffc107" v-show="item.isStar" @tap="star(item)">
+						</fa-FontAwesome>
+						<fa-FontAwesome type="far fa-star" size="28" class="mr-10" color="#666" v-show="!item.isStar" @tap="star(item)"></fa-FontAwesome>
+						{{item.star}}
+					</div>
+					<div class="item">
+						<fa-FontAwesome type="fas fa-heart" size="28" class="mr-10" color="#f04a82"
+							v-show="item.isPraise" @tap="praise(item)"></fa-FontAwesome>
+						<fa-FontAwesome type="far fa-heart" size="28" class="mr-10" color="#666" @tap="praise(item)"
+							v-show="!item.isPraise">
+						</fa-FontAwesome>
+						{{item.praise}}
 					</div>
 				</div>
 			</div>
 		</div>
 		<u-action-sheet :list="moreList" v-model="moreShow" @click="handleOpera"></u-action-sheet>
 		<div class="empty" v-show="postList.length === 0">
-			<u-empty text="暂无数据~" mode="list"></u-empty>
+			<u-empty :text="i18n.noData" mode="list"></u-empty>
 		</div>
 		<u-loadmore bg-color="rgba(0,0,0,0)" margin-bottom="20" :status="more" v-show="postList.length > 0" />
 	</view>
@@ -79,19 +86,6 @@
 					totalPage: 1
 				}, //页码信息
 				more: 'loadmore', //加载更多
-				moreList: [{
-					text: '关注',
-					subText: '关注TA'
-				}, {
-					text: '投诉',
-					subText: '投诉反馈不良内容'
-				}, {
-					text: 'Aeternal',
-					subText: '查看帖子在Aeternal的hash地址'
-				}, {
-					text: 'AEKnow',
-					subText: '查看帖子在AEKnow的hash地址'
-				}],
 				currentForum: {}, //当前选择的帖子
 				moreShow: false, //下箭头控制显示更多操作
 			}
@@ -114,9 +108,11 @@
 			this.getPostList();
 		},
 		computed: {
+			//国际化
 			i18n() {
 				return this.$_i18n.messages[this.$_i18n.locale]
 			},
+			//类别列表
 			categoryList() {
 				return [{
 						label: this.i18n.home.newRelease,
@@ -136,39 +132,62 @@
 					}
 				]
 			},
+			//显示更多操作
+			moreList() {
+				return [{
+					text: this.i18n.Following,
+					subText: this.i18n.FollowUser
+				}, {
+					text: this.i18n.complain,
+					subText: this.i18n.complainContent
+				}, {
+					text: this.i18n.Aeternal,
+					subText: this.i18n.AeternalContent
+				}, {
+					text: this.i18n.AEKnow,
+					subText: this.i18n.AEKnowContent
+				}]
+			},
 		},
 		methods: {
 			//获取帖子列表
 			getPostList() {
+				let url = '';
 				let params = {
 					currentPage: this.pageInfo.page,
 					perPage: this.pageInfo.pageSize
 				}
-				this.$http.post('/Content/list', params).then(res => {
+				if (this.cateInfo.value === 1) {
+					url = '/Content/list';
+				} else if (this.cateInfo.value === 2) {
+					url = '/Content/hotRec';
+				} else if (this.cateInfo.value === 3) {
+					url = '/Image/list';
+				} else if (this.cateInfo.value === 4) {
+					url = '/User/contentList';
+				}
+				this.$http.post(url, params).then(res => {
 					if (res.code === 200) {
 						this.pageInfo.totalPage = parseInt(res.data.totalPage);
 						this.more = 'loadmore';
 						if (this.pageInfo.page === 1) {
 							this.postList = res.data.data;
 						} else {
-							this.postList = this.postList.concat(res.data.data);
+							if (this.pageInfo.page >= this.pageInfo.totalPage) {
+								this.pageInfo.page = this.pageInfo.totalPage;
+								this.more = 'nomore';
+							} else {
+								this.postList = this.postList.concat(res.data.data);
+							}
 						}
 						if (status == 'pullDown') {
 							uni.stopPullDownRefresh();
 							this.postList = res.data.data;
 						}
-						if (this.pageInfo.page >= this.pageInfo.totalPage) {
-							this.pageInfo.page = this.pageInfo.totalPage;
-							this.more = 'nomore';
-						}
 					} else {
 						this.more = 'nomore';
 					}
 				})
-			},
-			//根据图片哈希获取图片
-			getImgByTx() {
-
 			},
 			//选择类别
 			selectCategory(val) {
@@ -179,16 +198,33 @@
 						break;
 					}
 				}
+				this.postList = [];
+				this.pageInfo = {
+					page: 1,
+					pageSize: 10
+				}; //页码信息
+				this.getPostList();
 			},
 			//更多操作
 			moreOpera(item) {
 				this.currentForum = item;
 				this.moreShow = true;
+				if (this.currentForum.isFocus) {
+					this.moreList[0] = {
+						text: this.i18n.cancelFollowing,
+						subText: this.i18n.cancelFollowingUser
+					}
+				} else {
+					this.moreList[0] = {
+						text: this.i18n.Following,
+						subText: this.i18n.FollowUser
+					}
+				}
 			},
 			//更多操作选择事件
 			handleOpera(index) {
 				if (index === 0) {
-
+					this.focus();
 				} else if (index === 1) {
 
 				} else if (index === 2) {
@@ -196,6 +232,47 @@
 				} else if (index === 3) {
 					window.open('https://www.aeknow.org/block/transaction/' + this.currentForum.hash);
 				}
+			},
+			//是否点赞
+			praise(item) {
+				let params = {
+					hash: item.hash,
+					type: 'topic'
+				}
+				this.$http.post('/Praise/submit', params).then(res => {
+					if (res.code === 200) {
+						item.isPraise = res.data.isPraise;
+						item.praise = res.data.praise;
+					}
+				})
+			},
+			//是否关注
+			focus() {
+				let params = {
+					userAddress: this.currentForum.users.userAddress
+				}
+				this.$http.post('/User/focus', params).then(res => {
+					if (res.code === 200) {
+						for (let i = 0; i < this.postList.length; i++) {
+							if (this.postList[i].users.userAddress === this.currentForum.users.userAddress) {
+								this.postList[i].isFocus = res.data.isFocus;
+							}
+						}
+					}
+				})
+			},
+			//是否收藏
+			star(item){
+				let params = {
+					hash: item.hash,
+					type: 'topic'
+				}
+				this.$http.post('/Content/star', params).then(res => {
+					if (res.code === 200) {
+						item.isStar = res.data.isStar;
+						item.star = res.data.star;
+					}
+				})
 			}
 		}
 	}
@@ -271,6 +348,12 @@
 
 							.name {
 								font-size: 28rpx;
+
+								text {
+									color: #999;
+									font-size: 24rpx;
+									margin-left: 6rpx;
+								}
 							}
 						}
 
@@ -291,6 +374,9 @@
 
 					.text-content {
 						margin-bottom: 20rpx;
+						word-wrap: break-word;
+						word-break: normal;
+						overflow: hidden;
 					}
 				}
 
