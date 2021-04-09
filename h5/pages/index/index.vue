@@ -264,8 +264,7 @@
 			//是否收藏
 			star(item){
 				let params = {
-					hash: item.hash,
-					type: 'topic'
+					hash: item.hash
 				}
 				this.$http.post('/Content/star', params).then(res => {
 					if (res.code === 200) {
