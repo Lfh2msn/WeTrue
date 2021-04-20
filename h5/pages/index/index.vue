@@ -22,7 +22,8 @@
 					<div class="user-info">
 						<div class="user">
 							<div class="name">
-								{{item.users.userName || '匿名'}}<text>(ID:{{item.users.userAddress.slice(-4)}})</text>
+								{{item.users.nickname || '匿名'}}
+								<text v-show="item.isFocus">已关注</text>
 							</div>
 							<div class="more">
 								<fa-FontAwesome type="fas fa-angle-down" size="36" class="mr-10" color="#cecece"
@@ -30,7 +31,7 @@
 								</fa-FontAwesome>
 							</div>
 						</div>
-						<div class="time">{{$moment(item.utcTime).fromNow()}}</div>
+						<div class="time"><text>ID:{{item.users.userAddress.slice(-4)}}</text>{{$moment(item.utcTime).fromNow()}}</div>
 					</div>
 				</div>
 				<div class="main-content">
@@ -239,7 +240,7 @@
 					hash: item.hash,
 					type: 'topic'
 				}
-				this.$http.post('/Praise/submit', params).then(res => {
+				this.$http.post('/Submit/praise', params).then(res => {
 					if (res.code === 200) {
 						item.isPraise = res.data.isPraise;
 						item.praise = res.data.praise;
@@ -251,7 +252,7 @@
 				let params = {
 					userAddress: this.currentForum.users.userAddress
 				}
-				this.$http.post('/User/focus', params).then(res => {
+				this.$http.post('/Submit/focus', params).then(res => {
 					if (res.code === 200) {
 						for (let i = 0; i < this.postList.length; i++) {
 							if (this.postList[i].users.userAddress === this.currentForum.users.userAddress) {
@@ -266,7 +267,7 @@
 				let params = {
 					hash: item.hash
 				}
-				this.$http.post('/Content/star', params).then(res => {
+				this.$http.post('/Submit/contentStar', params).then(res => {
 					if (res.code === 200) {
 						item.isStar = res.data.isStar;
 						item.star = res.data.star;
@@ -349,9 +350,9 @@
 								font-size: 28rpx;
 
 								text {
-									color: #999;
-									font-size: 24rpx;
-									margin-left: 6rpx;
+									color: #ff5722;
+									font-size: 20rpx;
+									margin-left: 20rpx;
 								}
 							}
 						}
@@ -360,6 +361,11 @@
 							font-size: 20rpx;
 							color: #91908e;
 							width: 100%;
+							text {
+								color: #999;
+								font-size: 24rpx;
+								margin-right:20rpx;
+							}
 						}
 					}
 

@@ -6,7 +6,8 @@ const login = {
 	namespaced: true,
 	state: {
 		token: getStore('token'),
-		userInfo: getStore('userInfo') || {}
+		userInfo: getStore('userInfo') || {},
+		keyStore: getStore('keyStore') || {}
 	},
 	getters: {},
 	mutations: {
@@ -17,6 +18,10 @@ const login = {
 		SET_USERINFO: (state, params) => {
 			state.userInfo = params;
 			setStore('userInfo', params);
+		},
+		SET_KEYSTORE: (state, params) => {
+			state.keyStore = params;
+			setStore('keyStore', params);
 		}
 	},
 	actions: {}

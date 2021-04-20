@@ -11,14 +11,19 @@
 				<u-gap height="14"></u-gap>
 				<u-input v-model="form.mnemonic" type="textarea" class="textarea" :clearable="false" height="160"
 					:custom-style="{padding:'15rpx'}" placeholder="one two three..." />
+				<div class="warnning" v-show="warning.mnemonic">{{i18n.login.mnemonicWarning}}</div>
 				<u-gap height="30"></u-gap>
 				<div class="form-title">{{i18n.Setpassword}}</div>
 				<u-gap height="14"></u-gap>
 				<u-input v-model="form.pass" type="text" class="textarea" :clearable="false"
-					:custom-style="{padding:'0 15rpx'}" placeholder="Password..." />
+					:custom-style="{padding:'0 15rpx'}" placeholder="Password..." maxlength="20" />
+				<div class="warnning" v-show="warning.pass">{{i18n.login.passWarning}}</div>
 			</div>
 			<u-gap height="40"></u-gap>
-			<u-button size="default" type="primary" shape="circle" ripple>{{i18n.login.login}}</u-button>
+			<u-button size="default" type="primary" shape="circle" ripple @tap="login" :loading="loading"
+				:throttle-time="1000">
+				{{i18n.login.login}}
+			</u-button>
 			<u-gap height="25"></u-gap>
 			<div class="clearfix">
 				<div class="pull-left mnemonic" @tap="reLaunchUrl('../index/index')">{{i18n.index}}</div>
@@ -29,13 +34,26 @@
 </template>
 
 <script>
+	import {
+		getHdWalletAccountFromMnemonic
+	} from '@aeternity/aepp-sdk/es/utils/hd-wallet'
+	import {
+		dump
+	} from '@aeternity/aepp-sdk/es/utils/keystore'
 	export default {
 		data() {
 			return {
+				//表单
 				form: {
 					mnemonic: '',
 					pass: ''
-				}
+				},
+				//表单验证
+				warning: {
+					mnemonic: false,
+					pass: false,
+				},
+				loading: false, //按钮加载状态
 			}
 		},
 		computed: {
@@ -44,7 +62,43 @@
 			},
 		},
 		methods: {
-
+			//登陆
+			login() {
+				if (!this.form.mnemonic) {
+					this.warning.mnemonic = true;
+					return;
+				} else {
+					this.warning.mnemonic = false;
+				}
+				if (!this.form.pass || this.form.pass.length < 3) {
+					this.warning.pass = true;
+					return;
+				} else {
+					this.warning.pass = false;
+				}
+				this.loading = true;
+				//助记词转换成钱包地址和秘钥
+				let publicKeyInsecretKey = getHdWalletAccountFromMnemonic(this.form.mnemonic, 0);
+				//通过密码和私钥生成keystore
+				dump('WeTrueWallet', this.form.pass, publicKeyInsecretKey.secretKey).then(keyStore => {
+					this.$store.commit('user/SET_KEYSTORE', keyStore);
+				})
+				this.getUserInfo(publicKeyInsecretKey.publicKey);
+			},
+			//获取用户完整信息
+			getUserInfo(address) {
+				let params = {
+					userAddress: address
+				}
+				this.$http.post('/User/info', params).then(res => {
+					if (res.code === 200) {
+						this.$store.commit('user/SET_TOKEN', address);
+						this.$store.commit('user/SET_USERINFO', res.data || {});
+						this.reLaunchUrl('../index/index');
+					}
+					this.loading = false;
+				})
+			}
 		}
 	}
 </script>
@@ -66,7 +120,7 @@
 			background-color: #FFFFFF;
 			border-radius: 10rpx;
 			min-height: 200rpx;
-			padding:60rpx 30rpx;
+			padding: 60rpx 30rpx;
 			box-shadow: 0rpx 5rpx 18rpx rgba($color: #666, $alpha:0.7);
 
 			.title {
@@ -81,8 +135,15 @@
 					border: 1px solid #ccc;
 					border-radius: 10rpx;
 				}
+
+				.warnning {
+					font-size: 20rpx;
+					color: #F00;
+					margin-top: 10rpx;
+				}
 			}
-			.mnemonic{
+
+			.mnemonic {
 				font-size: 24rpx;
 				color: #2196f3;
 			}

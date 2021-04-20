@@ -1,6 +1,6 @@
 <template>
 	<div class="my">
-		<div class="user-info" v-if="token">
+		<div class="user-info" v-if="!!token">
 			<div class="my-info">
 				<div class="block">
 					<div class="user-box">
@@ -9,21 +9,21 @@
 								<image v-if="userInfo.portrait" :src="userInfo.portrait"></image>
 								<image v-else src="../../static/default_head.png"></image>
 								<u-gap height="1"></u-gap>
-								{{userInfo.userName}}
+								{{userInfo.userName||'匿名'}}
 							</div>
 							<div class="address" @tap="copy" id="copy">{{address}}</div>
 						</div>
 						<div class="user-bottom">
 							<div class="item">
-								<div class="value">{{userInfo.active}}</div>
+								<div class="value">{{userInfo.active||0}}</div>
 								<div class="label">活跃度</div>
 							</div>
 							<div class="item">
-								<div class="value">{{userInfo.focus}}</div>
+								<div class="value">{{userInfo.focus||0}}</div>
 								<div class="label">关注</div>
 							</div>
 							<div class="item">
-								<div class="value">{{userInfo.fans}}</div>
+								<div class="value">{{userInfo.fans||0}}</div>
 								<div class="label">粉丝</div>
 							</div>
 						</div>
@@ -40,7 +40,7 @@
 						<fa-FontAwesome slot="icon" type="fab fa-linode" size="32" class="mr-10" color="#f04a82">
 						</fa-FontAwesome>
 					</u-cell-item>
-					<u-cell-item title="退出登录" @click="exit" :border-bottom="false">
+					<u-cell-item title="退出登录" @click="exit" :border-bottom="false" @tap="logout">
 						<fa-FontAwesome slot="icon" type="fas fa-sign-out-alt" size="32" class="mr-10" color="#f04a82">
 						</fa-FontAwesome>
 					</u-cell-item>
@@ -48,7 +48,7 @@
 			</div>
 			<!-- <div class="version">版本号：{{version}}</div> -->
 		</div>
-		<div class="login">
+		<div class="login" v-else>
 			<div class="login-box">
 				<div class="item" @tap="goUrl('../login/login')">
 					<fa-FontAwesome slot="icon" type="fas fa-wallet" size="48" class="mr-20" color="#f04a82">
@@ -92,13 +92,13 @@
 			//获取用户信息
 			getUserInfo() {
 				let params = {
-					userAddress: 'ak_2kxt6D65giv4yNt4oa44SjW4jEXfoHMviPFvAreSEXvz25Q3QQ'
+					userAddress: this.token
 				}
 				this.$http.post('/User/info', params).then(res => {
 					if (res.code === 200) {
 						this.userInfo = res.data;
-						for (let i = 0, len = this.userInfo.userAddress.length; i < len; i++) {
-							this.address += this.userInfo.userAddress[i]
+						for (let i = 0, len = this.token.length; i < len; i++) {
+							this.address += this.token[i]
 							if (i % 3 === 2) this.address += ' ';
 						}
 					}
@@ -133,8 +133,9 @@
 				// #endif
 			},
 			//退出登录
-			exit() {
-
+			logout() {
+				uni.clearStorage();
+				this.$store.commit('user/SET_TOKEN','');
 			}
 		}
 	};

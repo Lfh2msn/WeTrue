@@ -9,6 +9,8 @@ export default {
 		login:'登录',
 		mnemonicLogin:'助记词登陆',
 		rebuild:'重新生成',
+		mnemonicWarning:"助记词不能为空，一般为12个单词(空格间隔)",
+		passWarning:"临时密码要求3-20位",
 	},
 	index:'首页',
 	wetrue:'微触',
@@ -77,4 +79,5 @@ export default {
 	AeternalContent:'查看内容在Aeternal的hash详情',
 	AEKnow:'AEKnow',
 	AEKnowContent:'查看内容在AEKnow的hash详情',
+	loading:'加载中',
 };

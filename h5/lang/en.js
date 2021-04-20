@@ -8,7 +8,9 @@ export default {
 	login:{
 		login:'Login',
 		mnemonicLogin:'Mnemonic login',
-		rebuild:'Rebuild'
+		rebuild:'Rebuild',
+		mnemonicWarning:"Mnemonic can't be empty,Usually 12 words(space interval)",
+		passWarning:"The temporary password requires 3-20 characters",
 	},
 	index:'Index',
 	wetrue:'Wetrue',
@@ -77,4 +79,5 @@ export default {
 	AeternalContent:'See the content in Aeternal Hash for details',
 	AEKnow:'AEKnow',
 	AEKnowContent:'See the content in AEKnow Hash for details',
+	loading:'Loading',
 }

@@ -1,5 +1,8 @@
 import Request from '@/js_sdk/luch-request/luch-request/index.js'
 import {baseUrl} from '@/config/config.js'
+import {
+	getStore
+} from '@/util/service'
 var http = new Request({
 	baseURL:baseUrl,
 	custom:{
@@ -10,7 +13,7 @@ var http = new Request({
 http.interceptors.request.use(config=>{
 	config.header={
 		'Content-type': 'application/x-www-form-urlencoded',
-		'ak-token':'ak_2kxt6D65giv4yNt4oa44SjW4jEXfoHMviPFvAreSEXvz25Q3QQ'
+		'ak-token':getStore('token')
 	};
 	return config;
 })
