@@ -19,13 +19,17 @@ http.interceptors.request.use(config=>{
 })
 //请求成功后拦截器
 http.interceptors.response.use(res => {
-	if (res.data.code === 0) {
-		if(res.config.custom.isToast){
-			uni.showToast({
-				icon: 'none',
-				title: res.data.msg,
+	if (res.data.code === 401) {
+		uni.showToast({
+			icon: 'none',
+			title: res.data.msg,
+		});
+		setTimeout(()=>{
+			uni.reLaunch({
+			    url:'/pages/my/index'
 			});
-		}
+		},1000)
+		
 	}
 	return res.data;
 })

@@ -88,6 +88,11 @@
 				this.getUserInfo();
 			}
 		},
+		activated() {
+			if (!!this.token) {
+				this.getUserInfo();
+			}
+		},
 		methods: {
 			//获取用户信息
 			getUserInfo() {
@@ -97,6 +102,7 @@
 				this.$http.post('/User/info', params).then(res => {
 					if (res.code === 200) {
 						this.userInfo = res.data;
+						this.address='';
 						for (let i = 0, len = this.token.length; i < len; i++) {
 							this.address += this.token[i]
 							if (i % 3 === 2) this.address += ' ';

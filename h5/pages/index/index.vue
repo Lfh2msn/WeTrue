@@ -34,7 +34,7 @@
 						<div class="time"><text>ID:{{item.users.userAddress.slice(-4)}}</text>{{$moment(item.utcTime).fromNow()}}</div>
 					</div>
 				</div>
-				<div class="main-content">
+				<div class="main-content" @tap="goUrl('detail?hash='+item.hash)">
 					<div class="text-content">
 						{{item.payload}}
 					</div>
@@ -43,22 +43,19 @@
 					</div>
 				</div>
 				<div class="operation">
-					<div class="item">
-						<fa-FontAwesome type="far fa-comment" size="28" class="mr-10" color="#666"></fa-FontAwesome>
+					<div class="item" @tap="goUrl('detail?hash='+item.hash)">
+						<fa-FontAwesome type="far fa-comment-alt" size="28" class="mr-10" color="#666"></fa-FontAwesome>
 						{{item.commentNumber}}
 					</div>
-					<div class="item">
-						<fa-FontAwesome type="fas fa-star" size="28" class="mr-10" color="#ffc107" v-show="item.isStar" @tap="star(item)">
+					<div class="item" @tap="star(item)">
+						<fa-FontAwesome type="fas fa-star" size="28" class="mr-10" color="#ffc107" v-show="item.isStar">
 						</fa-FontAwesome>
-						<fa-FontAwesome type="far fa-star" size="28" class="mr-10" color="#666" v-show="!item.isStar" @tap="star(item)"></fa-FontAwesome>
+						<fa-FontAwesome type="far fa-star" size="28" class="mr-10" color="#666" v-show="!item.isStar"></fa-FontAwesome>
 						{{item.star}}
 					</div>
-					<div class="item">
-						<fa-FontAwesome type="fas fa-heart" size="28" class="mr-10" color="#f04a82"
-							v-show="item.isPraise" @tap="praise(item)"></fa-FontAwesome>
-						<fa-FontAwesome type="far fa-heart" size="28" class="mr-10" color="#666" @tap="praise(item)"
-							v-show="!item.isPraise">
-						</fa-FontAwesome>
+					<div class="item" @tap="praise(item)">
+						<u-icon v-show="!item.isPraise" class="mr-10" name="thumb-up" :size="30" color="#666"></u-icon>
+						<u-icon v-show="item.isPraise" class="mr-10" name="thumb-up-fill" color="#f04a82" :size="30"></u-icon>
 						{{item.praise}}
 					</div>
 				</div>
@@ -350,7 +347,7 @@
 								font-size: 28rpx;
 
 								text {
-									color: #ff5722;
+									color: #f04a82;
 									font-size: 20rpx;
 									margin-left: 20rpx;
 								}
