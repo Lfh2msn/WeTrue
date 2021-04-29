@@ -2,6 +2,13 @@ import {
 	getStore,
 	setStore
 } from '@/util/service'
+import store from '@/store';
+import {
+	Node,
+	Wallet,
+	Keystore,
+	MemoryAccount
+} from '@aeternity/aepp-sdk/es/index'
 const mixins = {
 	data() {
 		return {}
@@ -62,28 +69,77 @@ const mixins = {
 		goBackUrl(delta) {
 			// let current = getCurrentPages();
 			uni.navigateBack({
-				delta:delta
+				delta: delta
 			});
 		},
-		getProviderData() {
-			uni.getProvider({
-				service: 'oauth',
-				success: (res) => {
-					console.log(res);
+		//获取后端信息
+		getConfigInfo() {
+			this.$http.post('/Config/info').then(res => {
+				if (res.code === 200) {
+					store.commit('user/SET_CONFIGINFO', res.data);
 				}
 			})
 		},
-		getLogin() {
-			uni.login({
-				provider: '',
-				success: (res) => {
-					console.log(res);
-				},
-				fail: (error) => {
-					console.log(error);
-				}
-			})
+		//keystore通过密码转换成私钥
+		keystoreToSecretKey(password) {
+			const keystore = getStore('keystore')
+			return Keystore.recover(password, keystore).then(strhex => {
+				return strhex;
+			});
 		},
+		//验证是否登录
+		validLogin() {
+			if (getStore('keystore')) {
+				return true;
+			} else {
+				return false;
+			}
+		},
+		//AE交易
+		async connectAe(payload, type) {
+			try {
+				const secretKey = await this.keystoreToSecretKey(store.state.user.password);
+				const node = await Node({
+					url: store.state.user.nodeUrl
+				});
+				const client = await Wallet({
+					nodes: [{
+						name: "WeTrue",
+						instance: node
+					}],
+					accounts: [
+						MemoryAccount({
+							keypair: {
+								secretKey: secretKey,
+								publicKey: getStore('keystore').public_key
+							}
+						})
+					],
+					address: getStore('keystore').public_key
+				});
+				store.commit('user/SET_CLIENT', client);
+			} catch (error) {
+				alert(error)
+			}
+		},
+		//发送评论
+		async sendComment(payload) {
+			const client = store.state.user.client;
+			const configInfo = getStore('configInfo');
+			let content = {
+				WeTrue: configInfo.WeTrue,
+				type: "comment",
+				toHash: payload.hash,
+				content: payload.content
+			};
+			const res = await client.spend(configInfo.commentAmount, configInfo.receivingAccount, {
+				payload: JSON.stringify(content)
+			})
+			this.$http.post('/Submit/hash', {
+				hash: res.hash
+			});
+			return res;
+		}
 	}
 }
 const mixinsMobile = {

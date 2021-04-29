@@ -47,7 +47,9 @@
 	.pull-right {
 		float: right;
 	}
-
+	.t-c{
+		text-align: center;
+	}
 	.empty {
 		height: 80vh;
 		display: flex;

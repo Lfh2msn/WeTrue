@@ -53,6 +53,9 @@
 				</view>
 			</view>
 		</view>
+		<u-gap height="20"></u-gap>
+		<u-loadmore bg-color="rgba(0,0,0,0)" margin-bottom="20" :status="more" v-show="replyList.length > 0" />
+		<u-gap height="20"></u-gap>
 	</view>
 </template>
 
@@ -77,6 +80,7 @@ export default {
 	},
 	//上拉刷新
 	onPullDownRefresh() {
+		this.getCommentInfo();
 		this.pageInfo.page = 1;
 		this.getReply();
 		setTimeout(function() {
@@ -99,7 +103,7 @@ export default {
 			let params = {
 				hash: this.hash
 			}
-			this.$http.post('/Content/tx', params).then(res => {
+			this.$http.post('/Comment/tx', params).then(res => {
 				if (res.code === 200) {
 					this.commentInfo = res.data;
 				}
@@ -112,7 +116,7 @@ export default {
 				currentPage: this.pageInfo.page,
 				perPage: this.pageInfo.pageSize
 			}
-			this.$http.post('/Comment/list', params).then(res => {
+			this.$http.post('/Reply/list', params).then(res => {
 				if (res.code === 200) {
 					this.pageInfo.totalPage = parseInt(res.data.totalPage);
 					this.more = 'loadmore';
@@ -223,7 +227,7 @@ page {
 				margin-bottom: 4rpx;
 			}
 			.date {
-				font-size: 20rpx;
+				font-size: 24rpx;
 				color: $u-light-color;
 				.address{
 					font-size: 24rpx;
@@ -234,7 +238,7 @@ page {
 	}
 	.right {
 		display: flex;
-		font-size: 20rpx;
+		font-size: 24rpx;
 		align-items: center;
 		color: #9a9a9a;
 		.like {
@@ -253,7 +257,7 @@ page {
 	}
 }
 .all-reply {
-	margin-top: 10rpx;
+	margin-top: 20rpx;
 	padding-top: 20rpx;
 	background-color: #ffffff;
 	.all-reply-top {

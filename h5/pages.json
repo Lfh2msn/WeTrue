@@ -29,16 +29,16 @@
 					"titleNView": true //禁用原生导航栏
 				},
 				"navigationBarTitleText": "帖子详情",
-				"enablePullDownRefresh": false
+				"enablePullDownRefresh": true
 			}
-		},{
+		}, {
 			"path": "pages/index/reply",
 			"style": {
 				"app-plus": {
 					"titleNView": true //禁用原生导航栏
 				},
 				"navigationBarTitleText": "回复列表",
-				"enablePullDownRefresh": false
+				"enablePullDownRefresh": true
 			}
 		}, {
 			"path": "pages/login/login",
@@ -56,6 +56,15 @@
 					"titleNView": false //禁用原生导航栏
 				},
 				"navigationBarTitleText": "生成账户",
+				"enablePullDownRefresh": false
+			}
+		}, {
+			"path": "pages/login/password",
+			"style": {
+				"app-plus": {
+					"titleNView": false //禁用原生导航栏
+				},
+				"navigationBarTitleText": "验证密码",
 				"enablePullDownRefresh": false
 			}
 		}, {

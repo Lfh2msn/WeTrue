@@ -20,7 +20,7 @@
 				<div class="warnning" v-show="warning.pass">{{i18n.login.passWarning}}</div>
 			</div>
 			<u-gap height="40"></u-gap>
-			<u-button size="default" type="primary" shape="circle" ripple @tap="login" :loading="loading"
+			<u-button size="default" type="primary" shape="circle" ripple @tap="importMnemonic" :loading="loading"
 				:throttle-time="1000">
 				{{i18n.login.login}}
 			</u-button>
@@ -56,14 +56,17 @@
 				loading: false, //按钮加载状态
 			}
 		},
+		onLoad(){
+			
+		},
 		computed: {
 			i18n() {
 				return this.$_i18n.messages[this.$_i18n.locale]
 			},
 		},
 		methods: {
-			//登陆
-			login() {
+			//导入助记词
+			async importMnemonic() {
 				if (!this.form.mnemonic) {
 					this.warning.mnemonic = true;
 					return;
@@ -78,27 +81,31 @@
 				}
 				this.loading = true;
 				//助记词转换成钱包地址和秘钥
-				let publicKeyInsecretKey = getHdWalletAccountFromMnemonic(this.form.mnemonic, 0);
+				let publicKeyInsecretKey = await getHdWalletAccountFromMnemonic(this.form.mnemonic, 0);
 				//通过密码和私钥生成keystore
-				dump('WeTrueWallet', this.form.pass, publicKeyInsecretKey.secretKey).then(keyStore => {
-					this.$store.commit('user/SET_KEYSTORE', keyStore);
+				await dump('WeTrueWallet', this.form.pass, publicKeyInsecretKey.secretKey).then(keystore => {
+					this.$store.commit('user/SET_KEYSTORE', keystore);
+					this.$store.commit('user/SET_PASSWORD',this.form.pass);
 				})
-				this.getUserInfo(publicKeyInsecretKey.publicKey);
+				this.login(publicKeyInsecretKey.publicKey);
 			},
-			//获取用户完整信息
-			getUserInfo(address) {
+			//登陆
+			login(address){
 				let params = {
-					userAddress: address
+					userAddress: address,
+					type:'login'
 				}
 				this.$http.post('/User/info', params).then(res => {
 					if (res.code === 200) {
 						this.$store.commit('user/SET_TOKEN', address);
 						this.$store.commit('user/SET_USERINFO', res.data || {});
+						this.getConfigInfo();
+						this.connectAe();
 						this.reLaunchUrl('../index/index');
 					}
 					this.loading = false;
 				})
-			}
+			},
 		}
 	}
 </script>

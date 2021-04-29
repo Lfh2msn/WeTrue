@@ -60,7 +60,8 @@
 					</view>
 					<view class="right">
 						<view class="top">
-							<view class="name">{{ item.users.nickname }}<text class="address">ID:{{item.users.userAddress.slice(-4)}}</text></view>
+							<view class="name">{{ item.users.nickname }}<text
+									class="address">ID:{{item.users.userAddress.slice(-4)}}</text></view>
 							<view class="like" :class="{ highlight: item.isPraise }">
 								<view class="num">{{ item.praise }}</view>
 								<u-icon v-if="!item.isPraise" name="thumb-up" :size="30" color="#9a9a9a"
@@ -70,19 +71,19 @@
 							</view>
 						</view>
 						<view class="content">{{ item.payload }}</view>
-						<view class="reply-box">
+						<view class="reply-box" v-show="item.commentList.length>0">
 							<view class="item" v-for="(item, index) in item.commentList" :key="item.index">
 								<view class="username">{{ item.users.nickname }}</view>
 								<view class="text">{{ item.payload }}</view>
 							</view>
 							<view class="all-reply" @tap="goUrl('reply?hash='+item.hash)" v-if="!!item.commentList">
-								共{{ item.commentList.length }}条回复
+								共{{ item.replyNumber }}条回复
 								<u-icon class="more" name="arrow-right" :size="26"></u-icon>
 							</view>
 						</view>
 						<view class="bottom">
 							{{ $moment(item.utcTime).format('MM-DD HH:mm:ss') }}
-							<view class="reply">回复</view>
+							<view class="reply" @tap="comment(item)">回复</view>
 						</view>
 					</view>
 				</view>
@@ -92,26 +93,33 @@
 			</div>
 		</div>
 		<u-loadmore bg-color="rgba(0,0,0,0)" margin-bottom="20" :status="more" v-show="commentList.length > 0" />
-		<div class="bar-opera">
+		<u-gap height="80"></u-gap>
+		<div class="bar-opera" v-show="!isShowComment">
 			<div class="item" @tap="reward">
 				<fa-FontAwesome type="fas fa-coins" size="28" class="mr-10" color="#666"></fa-FontAwesome>
 				打赏
 			</div>
-			<div class="item" @tap="comment">
+			<div class="item" @tap="comment()">
 				<fa-FontAwesome type="far fa-comment-alt" size="28" class="mr-10" color="#666">
 				</fa-FontAwesome>评论
 			</div>
-			<div class="item" @tap="praise('topic')">
+			<div class="item" :class="{ highlight: postInfo.isPraise }" @tap="praise('topic')">
 				<u-icon v-show="!postInfo.isPraise" class="mr-10" name="thumb-up" :size="30" color="#666"></u-icon>
 				<u-icon v-show="postInfo.isPraise" class="mr-10" name="thumb-up-fill" color="#f04a82" :size="30">
 				</u-icon>赞
 			</div>
 		</div>
+		<inputComment :isShow="isShowComment" :valueData="[]" :placeholder="placeholder"
+			@clickOther="isShowComment=false" @submitComment="submitComment"></inputComment>
 	</view>
 </template>
 
 <script>
+	import inputComment from '@/components/input-comment/input-comment.vue'
 	export default {
+		components: {
+			inputComment
+		},
 		data() {
 			return {
 				hash: '', //哈希值
@@ -128,10 +136,13 @@
 					totalPage: 1
 				}, //页码信息
 				more: 'loadmore', //加载更多
+				isShowComment: false, //控制评论组件显示隐藏
+				placeholder: '写评论...', //评论文本框显示文字
 			}
 		},
 		//上拉刷新
 		onPullDownRefresh() {
+			this.getPostInfo();
 			this.pageInfo.page = 1;
 			this.getCommentList();
 			setTimeout(function() {
@@ -171,7 +182,8 @@
 				let params = {
 					hash: this.hash,
 					currentPage: this.pageInfo.page,
-					perPage: this.pageInfo.pageSize
+					perPage: this.pageInfo.pageSize,
+					replyLimit: 3
 				}
 				this.$http.post('/Comment/list', params).then(res => {
 					if (res.code === 200) {
@@ -197,8 +209,38 @@
 				})
 			},
 			//评论
-			comment() {
-
+			comment(item) {
+				if (!this.validLogin()) {
+					uni.showToast({
+						title: '请先登陆',
+						icon: 'none'
+					});
+					return false;
+				}
+				this.isShowComment = true;
+				if (item) {
+					this.placeholder = '回复@' + item.users.nickname;
+				} else {
+					this.placeholder = '写评论...'
+				}
+			},
+			//发表评论
+			async submitComment(content) {
+				let payload = {
+					hash: this.hash,
+					content: content
+				}
+				uni.showLoading({
+					title: '上链中'
+				});
+				const res = await this.sendComment(payload);
+				if (!!res.hash) {
+					setTimeout(() => {
+						this.isShowComment = false;
+						this.getCommentList();
+						uni.hideLoading();
+					}, 2000)
+				}
 			},
 			//打赏
 			reward() {
@@ -251,7 +293,7 @@
 		.forum {
 			&-item {
 				background-color: #fff;
-				margin-bottom: 10rpx;
+				margin-bottom: 20rpx;
 				border-bottom: 2rpx solid #e9e9e9;
 
 				.user-area {
@@ -305,6 +347,7 @@
 
 							.name {
 								font-size: 28rpx;
+
 								text {
 									color: #f04a82;
 									font-size: 20rpx;
@@ -320,7 +363,6 @@
 
 							text {
 								color: #999;
-								font-size: 24rpx;
 								margin-right: 20rpx;
 							}
 						}
@@ -417,13 +459,14 @@
 
 							.name {
 								color: #333;
-								.address{
+
+								.address {
 									color: #999;
 									font-size: 24rpx;
-									margin-left:10rpx;
+									margin-left: 10rpx;
 								}
 							}
-							
+
 							.like {
 								display: flex;
 								align-items: center;
@@ -447,15 +490,15 @@
 
 						.content {
 							font-size: 26rpx;
-							margin-bottom: 10rpx;
+							margin-bottom: 16rpx;
 						}
 
 						.reply-box {
 							background-color: rgb(242, 242, 242);
-							border-radius: 12rpx;
+							font-size: 24rpx;
 
 							.item {
-								padding: 20rpx;
+								padding: 15rpx 20rpx;
 								border-bottom: solid 2rpx $u-border-color;
 
 								.username {
@@ -502,10 +545,35 @@
 			display: flex;
 			justify-content: space-around;
 			border-top: 1rpx solid #d9d9d9;
+			z-index: 50;
 
 			.item {
 				display: flex;
 				align-items: center;
+				justify-content: center;
+				width: 33.33%;
+				position: relative;
+
+				&:after {
+					content: '';
+					width: 1rpx;
+					height: 50rpx;
+					position: absolute;
+					right: 0;
+					top: 50%;
+					transform: translateY(-50%);
+					background: linear-gradient(#f8f8f8, #d3d3d3, #f8f8f8);
+				}
+
+				&:nth-last-child(1) {
+					&::after {
+						width: 0;
+					}
+				}
+
+				&.highlight {
+					color: #f04a82;
+				}
 			}
 		}
 	}

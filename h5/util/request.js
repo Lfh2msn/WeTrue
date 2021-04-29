@@ -1,5 +1,6 @@
 import Request from '@/js_sdk/luch-request/luch-request/index.js'
 import {baseUrl} from '@/config/config.js'
+import store from '../store/index.js'
 import {
 	getStore
 } from '@/util/service'
@@ -15,6 +16,13 @@ http.interceptors.request.use(config=>{
 		'Content-type': 'application/x-www-form-urlencoded',
 		'ak-token':getStore('token')
 	};
+	if(!!getStore('keystore')){
+		if(!store.state.user.password){
+			uni.navigateTo({
+				url:'/pages/login/password'
+			})
+		}
+	}
 	return config;
 })
 //请求成功后拦截器
