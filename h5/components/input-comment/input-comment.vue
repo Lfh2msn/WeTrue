@@ -4,9 +4,10 @@
 		<view class="comment">
 			<view class="comment-info">
 				<view class="comment-input">
-					<textarea class="content" v-model="content" :placeholder="placeholder" :focus="isShow" :maxlength="100000" />
+					<textarea class="content" v-model="content" :placeholder="placeholder" :focus="isShow"
+						:maxlength="100000" />
 				</view>
-				<view @click.stop="submitComment" class="comment-submit">发送</view>
+				<view @click.stop="submitComment" class="comment-submit" :style="{'color':submitColor}">发送</view>
 			</view>
 		</view>
 	</view>
@@ -21,48 +22,39 @@
 			isShow: {
 				type: Boolean,
 				default: false
-			},
-			valueData: {
-				type: Array,
-				default: []
-			},
-			curKey: {
-				type: String,
-				default: ''
 			}
 		},
 		components: {},
 		data() {
 			return {
 				screenHeight: 0,
-				content:''
+				content: '',
+				submitColor: '#b0b0b0'
 			}
 		},
 		methods: {
-			inputValue(e) {
-				if (this.value) {
+			submitComment() {
+				if (!this.content) {
+					this.uShowToast('请输入内容');
+					return false;
+				}
+				this.$emit('submitComment', this.content);
+			},
+			clickOther() {
+				this.$emit('clickOther');
+			}
+		},
+		watch: {
+			content: function(val, oldVal) {
+				if (!!this.content) {
 					this.submitColor = '#fb5f5f';
 				} else {
 					this.submitColor = "#b0b0b0";
 				}
 			},
-			submitComment() {
-				this.$emit('submitComment', this.content);
-			},
-			clickOther() {
-				this.$emit('clickOther', this.value);
-			}
-		},
-		watch: {
-			value: function(val, oldVal) {
-				this.inputValue(val);
-			},
 			isShow: function(val, oldVal) {
-				this.value = this.valueData.hasOwnProperty(this.curKey) ? this.valueData[this.curKey] : '';
+
 			},
-			valueData: function(val, oldVal) {
-				// console.log(val,oldVal);
-			}
 		}
 	}
 </script>
@@ -97,6 +89,7 @@
 	.comment-input {
 		width: 85%;
 		height: 150rpx;
+
 		.content {
 			width: 100%;
 			box-sizing: border-box;

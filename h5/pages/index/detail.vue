@@ -42,7 +42,7 @@
 		</div>
 		<div class="comment">
 			<div class="clearfix header">
-				<div class="title"><text class="mr-6">评论</text>{{commentList.length}}</div>
+				<div class="title"><text class="mr-6">评论</text>{{postInfo.commentNumber}}</div>
 				<div class="praise"><text class="mr-6">赞</text>{{postInfo.praise}}</div>
 			</div>
 			<div class="comment-list">
@@ -60,7 +60,7 @@
 					</view>
 					<view class="right">
 						<view class="top">
-							<view class="name">{{ item.users.nickname }}<text
+							<view class="name">{{ item.users.nickname || '匿名'}}<text
 									class="address">ID:{{item.users.userAddress.slice(-4)}}</text></view>
 							<view class="like" :class="{ highlight: item.isPraise }">
 								<view class="num">{{ item.praise }}</view>
@@ -109,7 +109,7 @@
 				</u-icon>赞
 			</div>
 		</div>
-		<inputComment :isShow="isShowComment" :valueData="[]" :placeholder="placeholder"
+		<inputComment :isShow="isShowComment" :placeholder="placeholder"
 			@clickOther="isShowComment=false" @submitComment="submitComment"></inputComment>
 	</view>
 </template>
@@ -192,7 +192,7 @@
 						if (this.pageInfo.page === 1) {
 							this.commentList = res.data.data;
 						} else {
-							if (this.pageInfo.page >= this.pageInfo.totalPage) {
+							if (this.pageInfo.page > this.pageInfo.totalPage) {
 								this.pageInfo.page = this.pageInfo.totalPage;
 								this.more = 'nomore';
 							} else {
@@ -219,7 +219,8 @@
 				}
 				this.isShowComment = true;
 				if (item) {
-					this.placeholder = '回复@' + item.users.nickname;
+					let name = !!item.users.nickname ? item.users.nickname : item.users.userAddress.slice(-4)
+					this.placeholder = '回复@' + name;
 				} else {
 					this.placeholder = '写评论...'
 				}
@@ -239,6 +240,7 @@
 						this.isShowComment = false;
 						this.getCommentList();
 						uni.hideLoading();
+						content='';
 					}, 2000)
 				}
 			},

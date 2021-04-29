@@ -171,7 +171,7 @@
 						if (this.pageInfo.page === 1) {
 							this.postList = res.data.data;
 						} else {
-							if (this.pageInfo.page >= this.pageInfo.totalPage) {
+							if (this.pageInfo.page > this.pageInfo.totalPage) {
 								this.pageInfo.page = this.pageInfo.totalPage;
 								this.more = 'nomore';
 							} else {
