@@ -103,6 +103,7 @@ const mixins = {
 					url: store.state.user.nodeUrl
 				});
 				const client = await Wallet({
+					compilerUrl: 'https://compiler.aechina.io',
 					nodes: [{
 						name: "WeTrue",
 						instance: node
