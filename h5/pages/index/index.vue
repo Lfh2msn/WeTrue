@@ -6,6 +6,18 @@
 					<u-dropdown-item v-model="cateInfo.value" :title="cateInfo.label" :options="categoryList"
 						@change="selectCategory"></u-dropdown-item>
 				</u-dropdown>
+				<div class="left">
+					<fa-FontAwesome type="fas fa-language" size="36" class="mr-10" color="#f04a82" @tap="selectLanguage"
+						v-show="language === 'zh-cn'">
+					</fa-FontAwesome>
+					<fa-FontAwesome type="fas fa-language" size="36" class="mr-10" color="#03a9f4" @tap="selectLanguage"
+						v-show="language === 'en'">
+					</fa-FontAwesome>
+				</div>
+				<div class="right">
+					<fa-FontAwesome type="fas fa-plus" size="36" class="mr-10" color="#f04a82">
+					</fa-FontAwesome>
+				</div>
 			</view>
 		</u-navbar>
 		<div class="forum">
@@ -31,7 +43,9 @@
 								</fa-FontAwesome>
 							</div>
 						</div>
-						<div class="time"><text>ID:{{item.users.userAddress.slice(-4)}}</text>{{$moment(item.utcTime).fromNow()}}</div>
+						<div class="time">
+							<text>ID:{{item.users.userAddress.slice(-4)}}</text>{{$moment(item.utcTime).fromNow()}}
+						</div>
 					</div>
 				</div>
 				<div class="main-content" @tap="goUrl('detail?hash='+item.hash)">
@@ -50,12 +64,14 @@
 					<div class="item" @tap="star(item)">
 						<fa-FontAwesome type="fas fa-star" size="28" class="mr-10" color="#ffc107" v-show="item.isStar">
 						</fa-FontAwesome>
-						<fa-FontAwesome type="far fa-star" size="28" class="mr-10" color="#666" v-show="!item.isStar"></fa-FontAwesome>
+						<fa-FontAwesome type="far fa-star" size="28" class="mr-10" color="#666" v-show="!item.isStar">
+						</fa-FontAwesome>
 						{{item.star}}
 					</div>
 					<div class="item" @tap="praise(item)">
 						<u-icon v-show="!item.isPraise" class="mr-10" name="thumb-up" :size="30" color="#666"></u-icon>
-						<u-icon v-show="item.isPraise" class="mr-10" name="thumb-up-fill" color="#f04a82" :size="30"></u-icon>
+						<u-icon v-show="item.isPraise" class="mr-10" name="thumb-up-fill" color="#f04a82" :size="30">
+						</u-icon>
 						{{item.praise}}
 					</div>
 				</div>
@@ -70,9 +86,16 @@
 </template>
 
 <script>
+	import {
+		getStore,
+		setStore
+	} from '@/util/service'
+	import moment from 'moment';
 	export default {
 		data() {
 			return {
+				language: getStore('language'),
+				index: 0, //类别ID
 				cateInfo: {
 					value: 1,
 					label: ''
@@ -104,6 +127,10 @@
 		onLoad() {
 			this.cateInfo.label = this.i18n.home.newRelease;
 			this.getPostList();
+			if (!getStore('language')) {
+				setStore('language', 'zh-cn');
+				this.language = getStore('language');
+			}
 		},
 		computed: {
 			//国际化
@@ -145,7 +172,7 @@
 					text: this.i18n.AEKnow,
 					subText: this.i18n.AEKnowContent
 				}]
-			},
+			}
 		},
 		methods: {
 			//获取帖子列表
@@ -191,6 +218,7 @@
 			selectCategory(val) {
 				for (let i in this.categoryList) {
 					if (this.categoryList[i].value === val) {
+						this.index = i;
 						this.cateInfo.value = val;
 						this.cateInfo.label = this.categoryList[i].label;
 						break;
@@ -260,7 +288,7 @@
 				})
 			},
 			//是否收藏
-			star(item){
+			star(item) {
 				let params = {
 					hash: item.hash
 				}
@@ -270,6 +298,21 @@
 						item.star = res.data.star;
 					}
 				})
+			},
+			//切换语言
+			selectLanguage() {
+				if (getStore('language') === 'zh-cn') {
+					setStore('language', 'en');
+				} else if (getStore('language') === 'en') {
+					setStore('language', 'zh-cn');
+				}
+				//控制语言显示
+				this.language = getStore('language')
+				moment.locale(getStore('language'));
+				this.$_i18n.locale = getStore('language');
+				let index = parseInt(this.index) + 1;
+				this.cateInfo.value = index;
+				this.cateInfo.label = this.categoryList[this.index].label;
 			}
 		}
 	}
@@ -279,11 +322,34 @@
 	.index {
 		.nav {
 			width: 100%;
+			position: relative;
 
 			.u-dropdown {
 				background-color: #fafafa;
 				border-bottom: 1rpx solid #ddd;
 				height: 44px;
+			}
+
+			.left {
+				position: absolute;
+				height: 44px;
+				left: 25rpx;
+				top: 0;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				z-index: 100;
+			}
+
+			.right {
+				position: absolute;
+				height: 44px;
+				right: 20rpx;
+				top: 0;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				z-index: 100;
 			}
 		}
 
@@ -355,13 +421,13 @@
 						}
 
 						.time {
-							font-size: 20rpx;
+							font-size: 24rpx;
 							color: #91908e;
 							width: 100%;
+
 							text {
 								color: #999;
-								font-size: 24rpx;
-								margin-right:20rpx;
+								margin-right: 20rpx;
 							}
 						}
 					}

@@ -61,7 +61,7 @@
 							uni.reLaunch({
 								url: '/pages/index/index'
 							});
-						}, 500);
+						}, 1000);
 					}
 				} catch (error) {
 					this.uShowToast('验证失败');

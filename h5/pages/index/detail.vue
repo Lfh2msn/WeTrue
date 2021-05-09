@@ -73,8 +73,7 @@
 						<view class="content">{{ item.payload }}</view>
 						<view class="reply-box" v-show="item.commentList.length>0">
 							<view class="item" v-for="(item, index) in item.commentList" :key="item.index">
-								<view class="username">{{ item.users.nickname }}</view>
-								<view class="text">{{ item.payload }}</view>
+								<view class="text"><text class="name">{{item.users.nickname || item.users.userAddress.slice(-4)}}</text>：{{item.payload }}</view>
 							</view>
 							<view class="all-reply" @tap="goUrl('reply?hash='+item.hash)" v-if="!!item.commentList">
 								共{{ item.replyNumber }}条回复
@@ -82,7 +81,7 @@
 							</view>
 						</view>
 						<view class="bottom">
-							{{ $moment(item.utcTime).format('MM-DD HH:mm:ss') }}
+							{{ $moment(item.utcTime).format('yyyy-MM-DD HH:mm:ss') }}
 							<view class="reply" @tap="comment(item)">回复</view>
 						</view>
 					</view>
@@ -109,7 +108,7 @@
 				</u-icon>赞
 			</div>
 		</div>
-		<inputComment :isShow="isShowComment" :placeholder="placeholder"
+		<inputComment ref="inputComment" :isShow="isShowComment" :placeholder="placeholder"
 			@clickOther="isShowComment=false" @submitComment="submitComment"></inputComment>
 	</view>
 </template>
@@ -138,6 +137,8 @@
 				more: 'loadmore', //加载更多
 				isShowComment: false, //控制评论组件显示隐藏
 				placeholder: '写评论...', //评论文本框显示文字
+				commentType: '', //回复类型
+				currentComment: {}, //当前回复信息
 			}
 		},
 		//上拉刷新
@@ -215,32 +216,55 @@
 						title: '请先登陆',
 						icon: 'none'
 					});
+					setTimeout(() => {
+						uni.reLaunch({
+							url: '/pages/my/index'
+						});
+					}, 1000)
 					return false;
 				}
 				this.isShowComment = true;
 				if (item) {
 					let name = !!item.users.nickname ? item.users.nickname : item.users.userAddress.slice(-4)
 					this.placeholder = '回复@' + name;
+					this.commentType = 'reply';
+					this.currentComment = item;
 				} else {
-					this.placeholder = '写评论...'
+					this.placeholder = '写评论...';
+					this.commentType = 'comment';
 				}
 			},
 			//发表评论
 			async submitComment(content) {
-				let payload = {
-					hash: this.hash,
-					content: content
-				}
+				let res;
 				uni.showLoading({
 					title: '上链中'
 				});
-				const res = await this.sendComment(payload);
+				if(this.commentType==='comment'){
+					let payload = {
+						hash: this.hash,
+						content: content
+					}
+					res = await this.sendComment(payload);
+				}else if(this.commentType === 'reply'){
+					let payload={
+						type:'comment',
+						hash: this.currentComment.hash,
+						toHash:this.currentComment.toHash,
+						content: content
+					}
+					res = await this.sendReply(payload);
+				}
 				if (!!res.hash) {
 					setTimeout(() => {
 						this.isShowComment = false;
+						this.getPostInfo();
+						this.commentList = [];
+						this.pageInfo.page = 1;
 						this.getCommentList();
 						uni.hideLoading();
-						content='';
+						this.$refs.inputComment.content = '';
+						this.$refs.inputComment.btnLoading = false;
 					}, 2000)
 				}
 			},
@@ -359,7 +383,7 @@
 						}
 
 						.time {
-							font-size: 20rpx;
+							font-size: 24rpx;
 							color: #91908e;
 							width: 100%;
 
@@ -493,6 +517,9 @@
 						.content {
 							font-size: 26rpx;
 							margin-bottom: 16rpx;
+							word-wrap: break-word;
+							word-break: break-all;
+							overflow: hidden;
 						}
 
 						.reply-box {
@@ -502,10 +529,16 @@
 							.item {
 								padding: 15rpx 20rpx;
 								border-bottom: solid 2rpx $u-border-color;
-
-								.username {
-									font-size: 24rpx;
-									color: #999999;
+								.text{
+									word-wrap: break-word;
+									word-break: break-all;
+									overflow: hidden;
+									text-overflow:ellipsis;
+									display: inline-block;
+									width: 100%;
+									.name{
+										color:#f04a82;
+									}
 								}
 							}
 

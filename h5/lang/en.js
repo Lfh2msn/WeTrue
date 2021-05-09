@@ -12,6 +12,13 @@ export default {
 		mnemonicWarning:"Mnemonic can't be empty,Usually 12 words(space interval)",
 		passWarning:"The temporary password requires 3-20 characters",
 	},
+	my:{
+		myWallet:'My wallet',
+		nodeSet:'Node configuration',
+		logout:'Logout',
+		importWallet:'Import wallet',
+		createWallet:'Create wallet',
+	},
 	index:'Index',
 	wetrue:'Wetrue',
 	chooselanguage: "选择语言",

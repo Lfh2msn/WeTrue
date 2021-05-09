@@ -7,7 +7,9 @@
 					<textarea class="content" v-model="content" :placeholder="placeholder" :focus="isShow"
 						:maxlength="100000" />
 				</view>
-				<view @click.stop="submitComment" class="comment-submit" :style="{'color':submitColor}">发送</view>
+				<div class="comment-submit">
+					<u-button size="mini" @click.stop="submitComment" :loading="btnLoading" type="primary">发送</u-button>
+				</div>
 			</view>
 		</view>
 	</view>
@@ -29,7 +31,7 @@
 			return {
 				screenHeight: 0,
 				content: '',
-				submitColor: '#b0b0b0'
+				btnLoading: false,
 			}
 		},
 		methods: {
@@ -38,6 +40,7 @@
 					this.uShowToast('请输入内容');
 					return false;
 				}
+				this.btnLoading = true;
 				this.$emit('submitComment', this.content);
 			},
 			clickOther() {
@@ -87,7 +90,7 @@
 	}
 
 	.comment-input {
-		width: 85%;
+		width: 80%;
 		height: 150rpx;
 
 		.content {
@@ -102,7 +105,7 @@
 	}
 
 	.comment-submit {
-		width: 15%;
+		width: 20%;
 		color: #f04a82;
 		display: flex;
 		justify-content: center;

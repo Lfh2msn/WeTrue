@@ -12,6 +12,13 @@ export default {
 		mnemonicWarning:"助记词不能为空，一般为12个单词(空格间隔)",
 		passWarning:"临时密码要求3-20位",
 	},
+	my:{
+		myWallet:'我的钱包',
+		nodeSet:'节点配置',
+		logout:'退出登录',
+		importWallet:'导入钱包',
+		createWallet:'创建钱包',
+	},
 	index:'首页',
 	wetrue:'微触',
 	chooselanguage: "Choose Language",

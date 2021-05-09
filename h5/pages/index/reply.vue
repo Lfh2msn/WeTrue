@@ -184,6 +184,9 @@ page {
 	.content{
 		font-size: 26rpx;
 		padding:20rpx 0 0 0;
+		word-wrap: break-word;
+		word-break: break-all;
+		overflow: hidden;
 	}
 	.left {
 		display: flex;

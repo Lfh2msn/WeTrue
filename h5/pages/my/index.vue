@@ -32,15 +32,15 @@
 			</div>
 			<div class="menu">
 				<u-cell-group :border="false">
-					<u-cell-item title="我的钱包">
+					<u-cell-item :title="i18n.my.myWallet">
 						<fa-FontAwesome slot="icon" type="fas fa-wallet" size="32" class="mr-10" color="#f04a82">
 						</fa-FontAwesome>
 					</u-cell-item>
-					<u-cell-item title="节点配置">
+					<u-cell-item :title="i18n.my.nodeSet">
 						<fa-FontAwesome slot="icon" type="fab fa-linode" size="32" class="mr-10" color="#f04a82">
 						</fa-FontAwesome>
 					</u-cell-item>
-					<u-cell-item title="退出登录" @click="exit" :border-bottom="false" @tap="logout">
+					<u-cell-item :title="i18n.my.logout" @click="exit" :border-bottom="false" @tap="logout">
 						<fa-FontAwesome slot="icon" type="fas fa-sign-out-alt" size="32" class="mr-10" color="#f04a82">
 						</fa-FontAwesome>
 					</u-cell-item>
@@ -81,7 +81,11 @@
 			};
 		},
 		computed: {
-			...mapGetters(['token'])
+			...mapGetters(['token']),
+			//国际化
+			i18n() {
+				return this.$_i18n.messages[this.$_i18n.locale]
+			},
 		},
 		onLoad() {
 			if (!!this.token) {

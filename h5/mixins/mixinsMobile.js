@@ -140,6 +140,27 @@ const mixins = {
 				hash: res.hash
 			});
 			return res;
+		},
+		//发送回复
+		async sendReply(payload) {
+			const client = store.state.user.client;
+			const configInfo = getStore('configInfo');
+			let content = {
+				WeTrue: configInfo.WeTrue,
+				type: "reply",
+				reply_type: payload.type,
+				to_hash: payload.hash,
+				to_address: payload.address,
+				reply_hash: payload.replyHash,
+				content: payload.content
+			};
+			const res = await client.spend(configInfo.commentAmount, configInfo.receivingAccount, {
+				payload: JSON.stringify(content)
+			})
+			this.$http.post('/Submit/hash', {
+				hash: res.hash
+			});
+			return res;
 		}
 	}
 }
