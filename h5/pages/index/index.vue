@@ -15,7 +15,7 @@
 					</fa-FontAwesome>
 				</div>
 				<div class="right">
-					<fa-FontAwesome type="fas fa-plus" size="36" class="mr-10" color="#f04a82">
+					<fa-FontAwesome type="fas fa-plus" size="36" class="mr-10" color="#f04a82" @tap="goUrl('editor')">
 					</fa-FontAwesome>
 				</div>
 			</view>
@@ -50,7 +50,7 @@
 				</div>
 				<div class="main-content" @tap="goUrl('detail?hash='+item.hash)">
 					<div class="text-content">
-						{{item.payload}}
+						<u-parse :html="item.payload"></u-parse>
 					</div>
 					<div class="img-list">
 						<u-image width="150rpx" height="150rpx" :src="item.imgTx" v-if="item.imgTx"></u-image>
@@ -179,8 +179,8 @@
 			getPostList() {
 				let url = '';
 				let params = {
-					currentPage: this.pageInfo.page,
-					perPage: this.pageInfo.pageSize
+					page: this.pageInfo.page,
+					size: this.pageInfo.pageSize
 				}
 				if (this.cateInfo.value === 1) {
 					url = '/Content/list';

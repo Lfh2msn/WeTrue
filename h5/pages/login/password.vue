@@ -12,8 +12,8 @@
 					:custom-style="{padding:'10rpx 20rpx'}" />
 			</div>
 			<u-gap height="40"></u-gap>
-			<u-button size="default" type="primary" shape="circle" ripple @tap="check" :throttle-time="1000"
-				:loading="loading">验证
+			<u-button size="default" type="primary" shape="circle" ripple @click="check" :throttle-time="3000"
+				:loading="btnLoading">验证
 			</u-button>
 			<u-gap height="25"></u-gap>
 			<div class="t-c">
@@ -34,7 +34,7 @@
 				form: {
 					password: ''
 				},
-				loading: false, //按钮加载状态
+				btnLoading: false, //按钮加载状态
 			}
 		},
 		onLoad() {
@@ -48,15 +48,15 @@
 		methods: {
 			//检查密码是否和keystore匹配
 			async check() {
-				this.loading = true;
 				try {
+					this.btnLoading = true;
 					const secretKey = await this.keystoreToSecretKey(this.form.password);
 					if (!!secretKey) {
 						this.uShowToast('验证成功');
 						this.$store.commit('user/SET_PASSWORD', this.form.password);
 						this.getConfigInfo();
 						this.connectAe();
-						this.loading = false;
+						this.btnLoading = false;
 						setTimeout(() => {
 							uni.reLaunch({
 								url: '/pages/index/index'
@@ -65,7 +65,7 @@
 					}
 				} catch (error) {
 					this.uShowToast('验证失败');
-					this.loading = false;
+					this.btnLoading = false;
 				}
 			}
 		}

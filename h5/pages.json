@@ -23,6 +23,15 @@
 				"enablePullDownRefresh": true // 是否开启下拉刷新
 			}
 		}, {
+			"path": "pages/index/editor",
+			"style": {
+				"app-plus": {
+					"titleNView": false //禁用原生导航栏
+				},
+				"navigationBarTitleText": "发表文字",
+				"enablePullDownRefresh": false
+			}
+		}, {
 			"path": "pages/index/detail",
 			"style": {
 				"app-plus": {

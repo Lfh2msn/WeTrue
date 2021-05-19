@@ -32,10 +32,10 @@
 			</div>
 			<div class="menu">
 				<u-cell-group :border="false">
-					<u-cell-item :title="i18n.my.myWallet">
+					<!-- <u-cell-item :title="i18n.my.myWallet">
 						<fa-FontAwesome slot="icon" type="fas fa-wallet" size="32" class="mr-10" color="#f04a82">
 						</fa-FontAwesome>
-					</u-cell-item>
+					</u-cell-item> -->
 					<u-cell-item :title="i18n.my.nodeSet">
 						<fa-FontAwesome slot="icon" type="fab fa-linode" size="32" class="mr-10" color="#f04a82">
 						</fa-FontAwesome>

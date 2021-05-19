@@ -123,6 +123,23 @@ const mixins = {
 				alert(error)
 			}
 		},
+		//发布主贴
+		async sendTopic(payload) {
+			const client = store.state.user.client;
+			const configInfo = getStore('configInfo');
+			let content = {
+				WeTrue: configInfo.WeTrue,
+				type: "topic",
+				content: payload.content
+			};
+			const res = await client.spend(configInfo.commentAmount, configInfo.receivingAccount, {
+				payload: JSON.stringify(content)
+			})
+			this.$http.post('/Submit/hash', {
+				hash: res.hash
+			});
+			return res;
+		},
 		//发送评论
 		async sendComment(payload) {
 			const client = store.state.user.client;

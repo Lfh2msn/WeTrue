@@ -32,7 +32,7 @@
 				</div>
 				<div class="main-content">
 					<div class="text-content">
-						{{postInfo.payload}}
+						<u-parse :html="postInfo.payload"></u-parse>
 					</div>
 					<div class="img-list">
 						<u-image width="150rpx" height="150rpx" :src="postInfo.imgTx" v-if="postInfo.imgTx"></u-image>
@@ -70,10 +70,10 @@
 									@click="praise('comment',item)"></u-icon>
 							</view>
 						</view>
-						<view class="content">{{ item.payload }}</view>
+						<view class="content"><u-parse :html="item.payload"></u-parse></view>
 						<view class="reply-box" v-show="item.commentList.length>0">
 							<view class="item" v-for="(item, index) in item.commentList" :key="item.index">
-								<view class="text"><text class="name">{{item.users.nickname || item.users.userAddress.slice(-4)}}</text>：{{item.payload }}</view>
+								<view class="text"><text class="name">{{item.users.nickname || item.users.userAddress.slice(-4)}}</text>：<u-parse :html="item.payload"></u-parse></view>
 							</view>
 							<view class="all-reply" @tap="goUrl('reply?hash='+item.hash)" v-if="!!item.commentList">
 								共{{ item.replyNumber }}条回复
@@ -182,8 +182,8 @@
 			getCommentList() {
 				let params = {
 					hash: this.hash,
-					currentPage: this.pageInfo.page,
-					perPage: this.pageInfo.pageSize,
+					page: this.pageInfo.page,
+					size: this.pageInfo.pageSize,
 					replyLimit: 3
 				}
 				this.$http.post('/Comment/list', params).then(res => {
