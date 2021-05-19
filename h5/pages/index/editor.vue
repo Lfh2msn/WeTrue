@@ -6,7 +6,7 @@
 			</div>
 		</u-navbar>
 		<u-input v-model="form.text" type="textarea" :border="false" height="300" :auto-height="true" :maxlength="2000"
-			placeholder="这一刻的想法..." :clearable="false" />
+			placeholder="WeTrue记你所想..." :clearable="false" />
 	</div>
 </template>
 

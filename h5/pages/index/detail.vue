@@ -73,7 +73,7 @@
 						<view class="content"><u-parse :html="item.payload"></u-parse></view>
 						<view class="reply-box" v-show="item.commentList.length>0">
 							<view class="item" v-for="(item, index) in item.commentList" :key="item.index">
-								<view class="text"><text class="name">{{item.users.nickname || item.users.userAddress.slice(-4)}}</text>：<u-parse :html="item.payload"></u-parse></view>
+								<view class="text"><text class="name">{{item.users.nickname || item.users.userAddress.slice(-4)}}</text>：<u-parse class="parse" :html="item.payload"></u-parse></view>
 							</view>
 							<view class="all-reply" @tap="goUrl('reply?hash='+item.hash)" v-if="!!item.commentList">
 								共{{ item.replyNumber }}条回复
@@ -530,14 +530,19 @@
 								padding: 15rpx 20rpx;
 								border-bottom: solid 2rpx $u-border-color;
 								.text{
-									word-wrap: break-word;
-									word-break: break-all;
-									overflow: hidden;
-									text-overflow:ellipsis;
-									display: inline-block;
 									width: 100%;
+									display: flex;
 									.name{
 										color:#f04a82;
+										justify-content: start;
+									}
+									.parse{
+										display: inline-block;
+										word-wrap: break-word;
+										word-break: break-all;
+										overflow: hidden;
+										text-overflow:ellipsis;
+										height: 32rpx;
 									}
 								}
 							}
