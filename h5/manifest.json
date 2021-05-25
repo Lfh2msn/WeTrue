@@ -1,5 +1,5 @@
 {
-    "name" : "wetrue",
+    "name" : "WeTrue",
     "appid" : "__UNI__BC48802",
     "description" : "",
     "versionName" : "2.0.0",
@@ -72,6 +72,6 @@
         "router" : {
             "base" : "./"
         },
-        "title" : "wetrue"
+        "title" : "WeTrue"
     }
 }

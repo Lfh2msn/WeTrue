@@ -475,7 +475,7 @@
 					.right {
 						flex: 1;
 						padding-left: 20rpx;
-						font-size: 30rpx;
+						font-size:28rpx;
 
 						.top {
 							display: flex;
@@ -485,7 +485,6 @@
 
 							.name {
 								color: #333;
-
 								.address {
 									color: #999;
 									font-size: 24rpx;
@@ -535,6 +534,7 @@
 									.name{
 										color:#f04a82;
 										justify-content: start;
+										max-width: 30%;
 									}
 									.parse{
 										display: inline-block;
@@ -543,6 +543,7 @@
 										overflow: hidden;
 										text-overflow:ellipsis;
 										height: 32rpx;
+										max-width: 70%;
 									}
 								}
 							}

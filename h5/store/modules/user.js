@@ -2,12 +2,13 @@ import {
 	getStore,
 	setStore
 } from '@/util/service'
+import {nodeUrl} from '@/config/config.js'
 const login = {
 	namespaced: true,
 	state: {
 		token: getStore('token'), //钱包地址
 		password: '', //临时密码
-		nodeUrl: getStore('nodeUrl') || 'https://liushao.cc:5013/', //节点地址
+		nodeUrl: getStore('nodeUrl') || nodeUrl, //节点地址
 		configInfo: getStore('configInfo') || {}, //后端配置信息
 		userInfo: getStore('userInfo') || {}, //用户信息
 		keystore: getStore('keystore') || {}, //用户keyStore

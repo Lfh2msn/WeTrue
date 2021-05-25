@@ -6,7 +6,7 @@
 			</div>
 		</u-navbar>
 		<u-input v-model="form.text" type="textarea" :border="false" height="300" :auto-height="true" :maxlength="2000"
-			placeholder="WeTrue记你所想..." :clearable="false" />
+			placeholder="WeTrue 记你所想..." :clearable="false" />
 	</div>
 </template>
 
@@ -21,21 +21,14 @@
 			}
 		},
 		onLoad() {
-			if (!this.$store.state.user.password) {
-				uni.navigateTo({
-					url: '/pages/login/password'
-				})
-			}
+			this.isPassword();
+		},
+		activated(){
+			this.isPassword();
 		},
 		methods: {
 			//发布
 			async release() {
-				if (!this.$store.state.user.password) {
-					uni.navigateTo({
-						url: '/pages/login/password'
-					})
-					return false;
-				}
 				this.btnLoading = true;
 				uni.showLoading({
 					title: '发布中...'
@@ -45,11 +38,10 @@
 				}
 				let res = await this.sendTopic(payload);
 				if (!!res.hash) {
-					setTimeout(() => {
-						uni.hideLoading();
-						this.btnLoading = false;
-						this.reLaunchUrl('index');
-					}, 2000)
+					uni.hideLoading();
+					this.btnLoading = false;
+					this.getConfigInfo();
+					this.reLaunchUrl('index');
 				}
 			}
 		}

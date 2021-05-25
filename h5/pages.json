@@ -28,7 +28,7 @@
 				"app-plus": {
 					"titleNView": false //禁用原生导航栏
 				},
-				"navigationBarTitleText": "发表文字",
+				"navigationBarTitleText": "发布主贴",
 				"enablePullDownRefresh": false
 			}
 		}, {

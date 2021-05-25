@@ -87,6 +87,14 @@ const mixins = {
 				return strhex;
 			});
 		},
+		//验证密码是否存在
+		isPassword(){
+			if (!store.state.user.password) {
+				uni.navigateTo({
+					url: '/pages/login/password'
+				})
+			}
+		},
 		//验证是否登录
 		validLogin() {
 			if (getStore('keystore')) {
@@ -132,9 +140,9 @@ const mixins = {
 				type: "topic",
 				content: payload.content
 			};
-			const res = await client.spend(configInfo.commentAmount, configInfo.receivingAccount, {
+			const res = await client.spend(configInfo.topicAmount, configInfo.receivingAccount, {
 				payload: JSON.stringify(content)
-			})
+			});
 			this.$http.post('/Submit/hash', {
 				hash: res.hash
 			});
@@ -171,7 +179,7 @@ const mixins = {
 				reply_hash: payload.replyHash,
 				content: payload.content
 			};
-			const res = await client.spend(configInfo.commentAmount, configInfo.receivingAccount, {
+			const res = await client.spend(configInfo.replyAmount, configInfo.receivingAccount, {
 				payload: JSON.stringify(content)
 			})
 			this.$http.post('/Submit/hash', {
