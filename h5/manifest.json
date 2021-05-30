@@ -69,6 +69,21 @@
         "enable" : false
     },
     "h5" : {
+		"devServer" : {
+		    "port" : 8080,
+		    "disableHostCheck" : true,
+		    "proxy" : {
+		        "https://www.aeknow.org/api/" : {
+		            "target" : "https://www.aeknow.org/api/",
+		            "changeOrigin" : true,
+		            "secure" : false,
+		            "pathRewrite" : {
+		                "^https://www.aeknow.org/api/" : "/"
+		            }
+		        }
+		    },
+		    "https" : false
+		},
         "router" : {
             "base" : "./"
         },

@@ -56,8 +56,8 @@
 				loading: false, //按钮加载状态
 			}
 		},
-		onLoad(){
-			
+		onLoad() {
+
 		},
 		computed: {
 			i18n() {
@@ -85,15 +85,15 @@
 				//通过密码和私钥生成keystore
 				await dump('WeTrueWallet', this.form.pass, publicKeyInsecretKey.secretKey).then(keystore => {
 					this.$store.commit('user/SET_KEYSTORE', keystore);
-					this.$store.commit('user/SET_PASSWORD',this.form.pass);
+					this.$store.commit('user/SET_PASSWORD', this.form.pass);
 				})
 				this.login(publicKeyInsecretKey.publicKey);
 			},
 			//登陆
-			login(address){
+			login(address) {
 				let params = {
 					userAddress: address,
-					type:'login'
+					type: 'login'
 				}
 				this.$http.post('/User/info', params).then(res => {
 					if (res.code === 200) {

@@ -72,6 +72,9 @@ const mixins = {
 				delta: delta
 			});
 		},
+		balanceFormat(balance) {
+			return (parseInt(balance) / 1000000000000000000).toFixed(4);
+		},
 		//获取后端信息
 		getConfigInfo() {
 			this.$http.post('/Config/info').then(res => {
@@ -88,7 +91,7 @@ const mixins = {
 			});
 		},
 		//验证密码是否存在
-		isPassword(){
+		isPassword() {
 			if (!store.state.user.password) {
 				uni.navigateTo({
 					url: '/pages/login/password'

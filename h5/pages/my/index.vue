@@ -32,10 +32,10 @@
 			</div>
 			<div class="menu">
 				<u-cell-group :border="false">
-					<!-- <u-cell-item :title="i18n.my.myWallet">
+					<u-cell-item :title="i18n.my.myWallet" :value="'AE：'+balance">
 						<fa-FontAwesome slot="icon" type="fas fa-wallet" size="32" class="mr-10" color="#f04a82">
 						</fa-FontAwesome>
-					</u-cell-item> -->
+					</u-cell-item>
 					<u-cell-item :title="i18n.my.nodeSet">
 						<fa-FontAwesome slot="icon" type="fab fa-linode" size="32" class="mr-10" color="#f04a82">
 						</fa-FontAwesome>
@@ -65,6 +65,8 @@
 </template>
 
 <script>
+	import Request from '@/js_sdk/luch-request/luch-request/index.js'
+	const http = new Request();
 	import Clipboard from 'clipboard';
 	import {
 		version,
@@ -78,6 +80,7 @@
 				userInfo: {}, //用户信息
 				version: version, //应用版本号
 				address: '', //ae地址
+				balance:0,//余额
 			};
 		},
 		computed: {
@@ -91,6 +94,7 @@
 			if (!!this.token) {
 				this.getUserInfo();
 			}
+			this.getAccount();
 		},
 		activated() {
 			if (!!this.token) {
@@ -106,7 +110,7 @@
 				this.$http.post('/User/info', params).then(res => {
 					if (res.code === 200) {
 						this.userInfo = res.data;
-						this.address='';
+						this.address = '';
 						for (let i = 0, len = this.token.length; i < len; i++) {
 							this.address += this.token[i]
 							if (i % 3 === 2) this.address += ' ';
@@ -142,10 +146,16 @@
 				});
 				// #endif
 			},
+			//获取账户AE余额
+			getAccount() {
+				http.get('https://www.aeknow.org/api/account/' + this.token).then(res => {
+					this.balance=this.balanceFormat(res.data.balance)
+				})
+			},
 			//退出登录
 			logout() {
 				uni.clearStorage();
-				this.$store.commit('user/SET_TOKEN','');
+				this.$store.commit('user/SET_TOKEN', '');
 			}
 		}
 	};
@@ -157,7 +167,7 @@
 	}
 
 	.my {
-		.user-info{
+		.user-info {
 			.my-info {
 				.block {
 					background: #f04a82;
@@ -167,7 +177,7 @@
 					box-sizing: border-box;
 					color: #101010;
 					position: relative;
-			
+
 					.user-box {
 						width: 90%;
 						background-color: #fff;
@@ -179,23 +189,23 @@
 						bottom: -160upx;
 						font-size: 26upx;
 						box-sizing: border-box;
-			
+
 						.user-top {
 							padding: 30rpx 30rpx 0 30rpx;
 							display: flex;
-			
+
 							.head {
 								text-align: center;
 								font-size: 24upx;
 								padding: 20rpx 30rpx;
-			
+
 								image {
 									width: 120upx;
 									height: 120upx;
 									border-radius: 50%;
 								}
 							}
-			
+
 							.address {
 								display: inline-flex;
 								flex-wrap: wrap;
@@ -205,20 +215,20 @@
 								font-size: 34rpx;
 							}
 						}
-			
+
 						.user-bottom {
 							display: flex;
 							justify-content: space-around;
 							padding: 10rpx 30rpx 30rpx;
-			
+
 							.item {
 								text-align: center;
-			
+
 								.value {
 									font-size: 24rpx;
 									color: #000;
 								}
-			
+
 								.label {
 									font-size: 24rpx;
 									color: #666;
@@ -228,12 +238,12 @@
 					}
 				}
 			}
-			
+
 			.menu {
 				width: 80%;
 				margin: 180upx auto 80upx;
 			}
-			
+
 			.version {
 				color: #999;
 				font-size: 24upx;
@@ -243,19 +253,22 @@
 				text-align: center;
 			}
 		}
-		.login{
+
+		.login {
 			background-color: #f04a82;
 			height: calc(100vh - 50px);
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			.login-box{
-				margin:0 10%;
+
+			.login-box {
+				margin: 0 10%;
 				width: 90%;
-				.item{
+
+				.item {
 					background-color: #fff;
 					height: 110rpx;
-					width:100%;
+					width: 100%;
 					border-radius: 20rpx;
 					display: flex;
 					justify-content: center;
@@ -263,7 +276,8 @@
 					font-size: 44rpx;
 					box-shadow: 0rpx 5rpx 18rpx rgba($color: #666, $alpha:0.7);
 					transition: all 0.3;
-					&:active{
+
+					&:active {
 						transform: scale(1.1);
 					}
 				}
